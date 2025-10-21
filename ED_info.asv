@@ -1,0 +1,58 @@
+function [lowerbound,upperbound,dimension,fitness,loss, best_so_far] = ED_info(F)
+switch F
+    case 'gen6'
+        fitness = @gen6;
+        lowerbound=[100	50	80	50	50	50];
+        upperbound=[500	200	300	150	200	120];
+        dimension=6;
+        best_so_far = [447.2701      173.0521      263.8923      139.0725      165.6307      87.06865];
+        loss = @gen6_loss;
+end
+end
+% 6_gen
+function R = gen6(x)
+
+
+a_i = [	0.007	0.0095	0.009	0.009	0.008	0.0075];
+b_i = [	7	10	8.5	11	10.5	12];
+c_i = [240	200	220	200	220	190];
+
+c1= sum(c_i)+ sum(b_i.*x)+ sum(a_i.*((x.^2)));
+% c2= sum(abs(ei.*sin(fi.*(minx-x'))));
+c2 = 0;
+ploss = gen6_loss(x);
+constraint = sum(x) - (ploss + 1263);
+if constraint >= 0
+    loss = (c1 + c2) + ;
+else
+    loss = 1e7 * (c1+ c2);
+end
+R = loss;
+end
+
+function R = gen6_loss(x)
+dimension = 6;
+bij= 1e-3*[ 1.7 1.2 0.7 -0.1 -0.5 -0.2
+1.2 1.4 0.9 0.1 -0.6 -0.1
+0.7 0.9 3.1 0 -1 -0.6
+-0.1 0.1 0 2.4 -0.6 -0.8
+-0.5 -0.6 -1 -0.6 12.9 -0.2
+-0.2 -0.1 -0.6 -0.8 -0.2 15];
+
+bio= 1e-3*[ -0.3908 -0.1297 0.7047 0.0591 0.2161 -0.6635];
+
+boo= 0.56*1e2;
+% x
+pintd=0;
+for k=1:dimension
+    for o= 1:dimension
+        pintd= pintd+(x(k)*(bij(k,o)*x(o)));
+    end
+end
+ploss= 1e-2*(pintd+ boo+sum(bio.*x));
+R = ploss ;
+end
+
+
+%[appendix]{"version":"1.0"}
+%---
